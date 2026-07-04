@@ -1,0 +1,45 @@
+/* ═══════════════════════════════════════════════════════════
+ *  ScrollFloat — Character Scroll Reveal
+ *  ──────────────────────────────────────────────────────────
+ *  Per-character float-up animation driven by GSAP ScrollTrigger.
+ *  All visual styling (colour, font, spacing) is applied via
+ *  Tailwind utility classes on the wrapper / text elements.
+ *  This file only defines the structural layout and the
+ *  reduced-motion fallback, never hardcoded design tokens.
+ * ═══════════════════════════════════════════════════════════ */
+
+/* ── Wrapper clips overflow so characters appear to rise ── */
+
+.scroll-float-wrapper {
+  overflow: hidden;
+}
+
+/* ── Inner text container ── */
+
+.scroll-float-text {
+  display: inline-block;
+  white-space: pre-wrap;
+}
+
+/* ── Individual character ──
+ *
+ * Initial opacity: 0 matches the fromTo "from" state so there is
+ * no flash of visible text before GSAP takes over.  When the
+ * timeline plays (via ScrollTrigger scrub), GSAP animates each
+ * char to the "to" state (opacity: 1).
+ * ─────────────────────────────────────────────────────────── */
+
+.scroll-float-char {
+  display: inline-block;
+  opacity: 0;
+}
+
+/* ── Reduced motion: disable animation, show text normally ── */
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-float-wrapper.scroll-float-reduced .scroll-float-char {
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto !important;
+  }
+}

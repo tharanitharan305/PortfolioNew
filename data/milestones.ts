@@ -1,0 +1,81 @@
+import { Milestone } from "@/lib/types";
+
+export const milestones: Milestone[] = [
+  {
+    id: 1,
+    period: "2021",
+    title: "Learning C",
+    role: "Self-taught",
+    org: "Self-taught",
+    orgInitials: "ST",
+    type: "education",
+    tech: [{ name: "C", durationMonths: 12 }],
+  },
+  {
+    id: 2,
+    period: "2022",
+    title: "Learning Java + JDBC",
+    role: "Self-taught",
+    org: "Self-taught",
+    orgInitials: "ST",
+    type: "education",
+    tech: [
+      { name: "Java", durationMonths: 12 },
+      { name: "SQL", durationMonths: 12 },
+    ],
+  },
+  {
+    id: 3,
+    period: "2023",
+    title: "Learning Flutter",
+    role: "Self-taught",
+    org: "Self-taught",
+    orgInitials: "ST",
+    type: "education",
+    tech: [
+      { name: "Flutter", durationMonths: 18 },
+      { name: "Firebase", durationMonths: 18 },
+    ],
+  },
+  {
+    id: 4,
+    period: "Jan–May 2025",
+    title: "Flutter Developer, Intern",
+    role: "Flutter Developer Intern",
+    org: "Whiter Apps",
+    orgInitials: "WA",
+    type: "work",
+    tech: [
+      { name: "Flutter", durationMonths: 4 },
+      { name: "Firebase", durationMonths: 4 },
+    ],
+  },
+  {
+    id: 5,
+    period: "May–Dec 2025",
+    title: "Full Stack Developer",
+    role: "Full Stack Developer",
+    org: "BeeZet",
+    orgInitials: "BZ",
+    type: "work",
+    tech: [
+      { name: "Flutter", durationMonths: 7 },
+      { name: "PHP", durationMonths: 7 },
+      { name: "MySQL", durationMonths: 7 },
+    ],
+  },
+  {
+    id: 6,
+    period: "Jan 2026–Present",
+    title: "Full Stack Developer",
+    role: "Full Stack Developer",
+    org: "Blended Pedagogy",
+    orgInitials: "BP",
+    type: "work",
+    tech: [
+      { name: "Node.js", durationMonths: 6 },
+      { name: "Docker", durationMonths: 6 },
+      { name: "PostgreSQL", durationMonths: 6 },
+    ],
+  },
+];

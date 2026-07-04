@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@14 . --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --jsdom=false --no-turbopack)",
+      "Bash(cd /d/ && ls -la)",
+      "Read(//d//**)",
+      "Bash(npx create-next-app@14 portfolioai-tmp --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --use-npm)",
+      "Read(//d/portfolioai-tmp/**)",
+      "Bash(cp -r . /d/PortfolioAI/)",
+      "Bash(npm install *)",
+      "Bash(mkdir -p /d/PortfolioAI/lib /d/PortfolioAI/data /d/PortfolioAI/app/components /d/PortfolioAI/public)",
+      "Bash(npx next *)",
+      "Bash(rm -rf /d/portfolioai-tmp)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(curl -s http://localhost:3001)",
+      "Bash(curl -s http://localhost:3099)",
+      "Bash(npx shadcn@latest add https://www.vengenceui.com/r/morph-text.json)",
+      "Bash(npx shadcn@latest --help)",
+      "Bash(npx shadcn@latest init --help)",
+      "Bash(npx shadcn@latest add --help)",
+      "Bash(npx shadcn@latest init --defaults -y)",
+      "Bash(npx shadcn@latest add https://www.vengenceui.com/r/morph-text.json -y)",
+      "Bash(npx tsc *)"
+    ],
+    "additionalDirectories": [
+      "D:\\PortfolioAI",
+      "D:\\portfolioai-tmp"
+    ]
+  }
+}

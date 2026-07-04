@@ -1,0 +1,156 @@
+/* ── Canvas ── */
+.infinite-menu-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.infinite-menu-canvas {
+  cursor: grab;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  outline: none;
+  display: block;
+}
+
+.infinite-menu-canvas:active {
+  cursor: grabbing;
+}
+
+/* ── Overlay title ── */
+.infinite-menu-title {
+  user-select: none;
+  position: absolute;
+  top: 50%;
+  left: 1.6em;
+  transform: translate(20%, -50%);
+  font-weight: 900;
+  font-size: clamp(1.4rem, 3.5vw, 3rem);
+  font-family: var(--font-space-grotesk), sans-serif;
+  color: #fff;
+  margin: 0;
+  line-height: 1.2;
+  pointer-events: none;
+  max-width: 30vw;
+  z-index: 20;
+}
+
+.infinite-menu-title.active {
+  opacity: 1;
+  transform: translate(20%, -50%);
+  pointer-events: auto;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.infinite-menu-title.inactive {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.1s ease, transform 0.1s ease;
+}
+
+/* ── Overlay description ── */
+.infinite-menu-description {
+  user-select: none;
+  position: absolute;
+  top: 50%;
+  right: 1%;
+  max-width: 18ch;
+  margin: 0;
+  font-size: clamp(0.8rem, 1.2vw, 1.2rem);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  color: rgba(232, 228, 216, 0.75);
+  line-height: 1.5;
+  pointer-events: none;
+  text-align: right;
+  z-index: 20;
+}
+
+.infinite-menu-description.active {
+  opacity: 1;
+  transform: translate(-90%, -50%);
+  pointer-events: auto;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.infinite-menu-description.inactive {
+  pointer-events: none;
+  transform: translate(-60%, -50%);
+  opacity: 0;
+  transition: opacity 0.1s ease, transform 0.1s ease;
+}
+
+/* ── Action (link) button ── */
+.infinite-menu-button {
+  position: absolute;
+  left: 50%;
+  z-index: 10;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  background: #d4a24c;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(212, 162, 76, 0.3);
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.infinite-menu-button:hover {
+  background: #e0b158;
+  box-shadow: 0 6px 28px rgba(212, 162, 76, 0.5);
+}
+
+.infinite-menu-button.active {
+  bottom: 3.8em;
+  transform: translateX(-50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.5s ease, transform 0.5s ease, bottom 0.5s ease;
+}
+
+.infinite-menu-button.inactive {
+  bottom: -80px;
+  transform: translateX(-50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s ease, transform 0.1s ease, bottom 0.1s ease;
+}
+
+.infinite-menu-button-icon {
+  position: relative;
+  color: #12141c;
+  font-size: 24px;
+  line-height: 1;
+  top: 1px;
+}
+
+/* ── Responsive: hide text overlays on narrow screens ── */
+@media (max-width: 1200px) {
+  .infinite-menu-description {
+    display: none;
+  }
+
+  .infinite-menu-title {
+    font-size: clamp(1rem, 3vw, 1.6rem);
+    max-width: 40vw;
+  }
+}
+
+@media (max-width: 768px) {
+  .infinite-menu-title {
+    display: none;
+  }
+
+  .infinite-menu-button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .infinite-menu-button-icon {
+    font-size: 18px;
+  }
+}

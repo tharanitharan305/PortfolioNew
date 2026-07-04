@@ -1,0 +1,125 @@
+/* ═══════════════════════════════════════════════════════════
+ *  TechStack — Cinematic Section Animations
+ *  ──────────────────────────────────────────────────────────
+ *  Scroll-driven narrative for the title header + enhanced
+ *  presence for the 3D InfiniteMenu carousel.
+ * ═══════════════════════════════════════════════════════════ */
+
+/* ── 1. Section background layers ── */
+
+.tech-bg-layer {
+  will-change: transform;
+}
+
+/* ── 2. Animated accent line (GSAP scaleY) ── */
+
+.tech-accent-line {
+  will-change: transform;
+}
+
+/* ── 3. GSAP word-reveal targets ── */
+
+.gsap-word {
+  will-change: transform, opacity, filter;
+  white-space: pre-wrap;
+}
+
+/* ── 4. Floating motes ── */
+
+.tech-motes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.tech-mote {
+  position: absolute;
+  bottom: -8px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(212, 162, 76, 0.35);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* ── 5. Magnetic glow ── */
+
+.tech-magnetic-glow {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(212, 162, 76, 0.12) 0%,
+    rgba(79, 163, 156, 0.06) 40%,
+    transparent 70%
+  );
+  filter: blur(80px);
+  pointer-events: none;
+  will-change: transform, opacity, left, top;
+}
+
+/* ── 6. Scroll hint ── */
+
+.tech-scroll-hint {
+  z-index: 10;
+}
+
+/* ── 7. Section divider glow ── */
+
+.tech-divider-glow {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212, 162, 76, 0.08) 50%,
+    transparent 100%
+  );
+}
+
+/* ── 8. Decorative ring ── */
+
+@keyframes ring-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.tech-ring {
+  animation: ring-rotate 35s linear infinite;
+}
+
+/* ── 9. Reduced motion ── */
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-bg-layer,
+  .tech-accent-line,
+  .gsap-word,
+  .tech-mote,
+  .tech-magnetic-glow,
+  .tech-ring {
+    animation: none !important;
+    transition: none !important;
+    will-change: auto;
+  }
+
+  .gsap-word {
+    opacity: 1 !important;
+    filter: blur(0px) !important;
+    transform: none !important;
+  }
+
+  .tech-accent-line {
+    transform: scaleY(1) !important;
+  }
+
+  .tech-mote {
+    opacity: 0 !important;
+  }
+
+  .tech-magnetic-glow {
+    opacity: 0.15 !important;
+  }
+}
