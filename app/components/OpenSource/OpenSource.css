@@ -1,0 +1,305 @@
+/* ═══════════════════════════════════════════════════════════
+ *  OpenSource — Terminal Typewriter Section
+ *
+ *  A retro terminal window that "types out" each open-source
+ *  repo entry when scrolled into view.  The design follows the
+ *  site's dark / purple-teal accent palette while evoking a
+ *  developer-native CLI aesthetic.
+ * ═══════════════════════════════════════════════════════════ */
+
+/* ── Terminal outer shell ─────────────────────────────── */
+
+.terminal-root {
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow:
+    0 0 60px rgba(192, 132, 252, 0.05),
+    0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Title bar (macOS-style traffic-light dots) ──────── */
+
+.terminal-titlebar {
+  display: flex;
+  align-items: center;
+  padding: 12px 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  user-select: none;
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.terminal-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transition: opacity 0.2s;
+}
+
+.terminal-dot-red {
+  background: #ff5f57;
+}
+.terminal-dot-yellow {
+  background: #ffbd2e;
+}
+.terminal-dot-green {
+  background: #28c840;
+}
+
+.terminal-dots:hover .terminal-dot {
+  opacity: 0.8;
+}
+
+.terminal-title {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.25);
+  margin: 0 auto;
+  letter-spacing: 0.04em;
+}
+
+.terminal-spacer {
+  flex: 1;
+}
+
+/* ── Body ─────────────────────────────────────────────── */
+
+.terminal-body {
+  padding: 22px 26px;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 13px;
+  line-height: 1.9;
+  color: #e2e8f0;
+}
+
+/* ── Prompt line ──────────────────────────────────────── */
+
+.terminal-prompt {
+  color: #2dd4bf;
+}
+
+.terminal-caret {
+  color: #c084fc;
+  margin: 0 10px;
+}
+
+.terminal-header-line {
+  display: flex;
+  align-items: center;
+  opacity: 0;
+}
+
+/* ── Output area ──────────────────────────────────────── */
+
+.terminal-output {
+  margin: 18px 0 8px;
+}
+
+/* ── Single repo entry ────────────────────────────────── */
+
+.repo-entry {
+  margin-bottom: 2px;
+  padding: 3px 0;
+}
+
+.repo-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+}
+
+.terminal-index {
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 11px;
+  width: 26px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.terminal-folder-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.terminal-repo-name {
+  color: #c084fc;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.terminal-repo-name:hover {
+  color: #a78bfa;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ── Description typewriter ───────────────────────────── */
+
+.repo-description {
+  display: flex;
+  gap: 8px;
+  padding-left: 36px;
+  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.terminal-arrow {
+  color: rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+  font-size: 12px;
+}
+
+.terminal-desc-text {
+  flex: 1;
+}
+
+.typewriter-char {
+  display: inline;
+  opacity: 0;
+}
+
+/* ── Stats row ────────────────────────────────────────── */
+
+.repo-stats {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-left: 36px;
+  margin-top: 5px;
+  font-size: 11px;
+  opacity: 0;
+}
+
+.terminal-stat {
+  color: rgba(255, 255, 255, 0.35);
+  font-variant-numeric: tabular-nums;
+}
+
+.terminal-lang-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.terminal-lang {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.terminal-url {
+  color: rgba(255, 255, 255, 0.12);
+  font-size: 10px;
+  margin-left: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+  transition: color 0.2s;
+}
+
+.repo-entry:hover .terminal-url {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Final prompt + cursor ────────────────────────────── */
+
+.terminal-final-prompt {
+  display: flex;
+  align-items: center;
+  margin-top: 22px;
+  opacity: 0;
+}
+
+.terminal-cursor {
+  color: #2dd4bf;
+  margin-left: 8px;
+  animation: terminal-blink 1s step-end infinite;
+  font-size: 14px;
+  line-height: 1;
+}
+
+@keyframes terminal-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ── Separator line ───────────────────────────────────── */
+
+.terminal-sep {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  margin: 4px 0;
+}
+
+/* ── Reduced motion: show everything at once ──────────── */
+
+.reduce-motion .terminal-root,
+.reduce-motion .terminal-header-line,
+.reduce-motion .repo-name,
+.reduce-motion .repo-stats,
+.reduce-motion .terminal-final-prompt,
+.reduce-motion .typewriter-char {
+  opacity: 1 !important;
+}
+
+.reduce-motion .terminal-cursor {
+  animation: none !important;
+  opacity: 1 !important;
+}
+
+/* ── Mobile adjustments ───────────────────────────────── */
+
+@media (max-width: 640px) {
+  .terminal-body {
+    padding: 16px 14px;
+    font-size: 11px;
+  }
+
+  .repo-description {
+    padding-left: 28px;
+    font-size: 10px;
+  }
+
+  .repo-stats {
+    padding-left: 28px;
+    font-size: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .terminal-url {
+    display: none;
+  }
+
+  .terminal-index {
+    width: 20px;
+    font-size: 10px;
+  }
+
+  .terminal-titlebar {
+    padding: 8px 12px;
+  }
+
+  .terminal-dot {
+    width: 10px;
+    height: 10px;
+  }
+}
