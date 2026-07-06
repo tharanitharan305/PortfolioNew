@@ -842,9 +842,9 @@ class InfiniteGridMenu {
               c.width = cellSize;
               c.height = cellSize;
               const cx = c.getContext("2d")!;
-              cx.fillStyle = "#2a2a3e";
+              cx.fillStyle = "#1a1a2e";
               cx.fillRect(0, 0, cellSize, cellSize);
-              cx.fillStyle = "#d4a24c";
+              cx.fillStyle = "#c084fc";
               cx.font = "bold 64px system-ui";
               cx.textAlign = "center";
               cx.textBaseline = "middle";

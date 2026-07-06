@@ -49,7 +49,7 @@ const DotField = memo(function DotField({
   waveAmplitude = 0,
   gradientFrom = "rgba(168, 85, 247, 0.35)",
   gradientTo = "rgba(180, 151, 207, 0.25)",
-  glowColor = "#120F17",
+  glowColor = "#0d0618",
   className,
   style,
   ...rest
@@ -66,7 +66,7 @@ const DotField = memo(function DotField({
     speed: 0,
   });
   const rafRef = useRef<number | null>(null);
-  const sizeRef = useRef({ w: 0, h: 0, offsetX: 0, offsetY: 0 });
+  const sizeRef = useRef({ w: 0, h: 0 });
   const glowOpacity = useRef(0);
   const engagement = useRef(0);
   const propsRef = useRef<Record<string, unknown>>({});
@@ -83,7 +83,20 @@ const DotField = memo(function DotField({
     gradientTo,
   };
   const rebuildRef = useRef<(() => void) | null>(null);
+  const gradientRef = useRef<CanvasGradient | null>(null);
   const glowId = useId();
+
+  /** Adaptive quality — monitors FPS and adjusts dot density dynamically. */
+  const qualityRef = useRef({
+    /** Wider spacing multiplier when system is slow (1 = full, 2.5 = minimum). */
+    spacingMul: 1,
+    /** Accumulated frame count between FPS checks. */
+    frameCount: 0,
+    /** Timestamp of last FPS check. */
+    lastCheck: 0,
+    /** True when last render took > 24 ms → skip next frame. */
+    heavy: false,
+  });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -110,19 +123,14 @@ const DotField = memo(function DotField({
       canvas!.style.height = `${h}px`;
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      sizeRef.current = {
-        w,
-        h,
-        offsetX: rect.left + window.scrollX,
-        offsetY: rect.top + window.scrollY,
-      };
-
+      sizeRef.current = { w, h };
+      gradientRef.current = null; // rebuild gradient next frame
       buildDots(w, h);
     }
 
-    function buildDots(w: number, h: number) {
+    function buildDots(w: number, h: number, spacingMul = qualityRef.current.spacingMul) {
       const p = propsRef.current;
-      const step = (p.dotRadius as number) + (p.dotSpacing as number);
+      const step = (p.dotRadius as number) + (p.dotSpacing as number) * spacingMul;
       const cols = Math.floor(w / step);
       const rows = Math.floor(h / step);
       const padX = (w % step) / 2;
@@ -150,9 +158,8 @@ const DotField = memo(function DotField({
     }
 
     function onMouseMove(e: MouseEvent) {
-      const s = sizeRef.current;
-      mouseRef.current.x = e.pageX - s.offsetX;
-      mouseRef.current.y = e.pageY - s.offsetY;
+      mouseRef.current.x = e.clientX;
+      mouseRef.current.y = e.clientY;
     }
 
     function updateMouseSpeed() {
@@ -168,41 +175,60 @@ const DotField = memo(function DotField({
 
     const speedInterval = setInterval(updateMouseSpeed, 20);
 
-    let frameCount = 0;
+    function tick(timestamp: DOMHighResTimeStamp) {
+      /* ── Adaptive frame skip ──────────────────────
+       * On low‑powered systems the previous frame took
+       * > 24 ms, so we skip this frame entirely to let
+       * the CPU/GPU catch up.  RAF is still re‑armed so
+       * the skip is invisible — we just render less often. */
+      if (qualityRef.current.heavy) {
+        qualityRef.current.heavy = false;
+        rafRef.current = requestAnimationFrame(tick);
+        return;
+      }
 
-    function tick() {
-      frameCount++;
+      const frameStart = performance.now();
+      const q = qualityRef.current;
+
       const dots = dotsRef.current;
       const m = mouseRef.current;
       const { w, h } = sizeRef.current;
       const p = propsRef.current;
       const len = dots.length;
-      const t = frameCount * 0.02;
+      const t = timestamp * 0.02;
 
+      /* ── Engagement (smooth mouse‑speed follower) ── */
       const targetEngagement = Math.min(m.speed / 5, 1);
       engagement.current += (targetEngagement - engagement.current) * 0.06;
       if (engagement.current < 0.001) engagement.current = 0;
       const eng = engagement.current;
 
+      /* ── SVG glow ────────────────────────────────── */
       glowOpacity.current += (eng - glowOpacity.current) * 0.08;
-
       if (glowEl) {
         glowEl.setAttribute("cx", String(m.x));
         glowEl.setAttribute("cy", String(m.y));
         glowEl.style.opacity = String(glowOpacity.current);
       }
 
+      /* ── Clear + cached gradient ───────────────────
+       *  createLinearGradient + addColorStop are
+       *  expensive — build once, reuse until resize.   */
       ctx!.clearRect(0, 0, w, h);
+      if (!gradientRef.current) {
+        gradientRef.current = ctx!.createLinearGradient(0, 0, w, h);
+        gradientRef.current.addColorStop(0, p.gradientFrom as string);
+        gradientRef.current.addColorStop(1, p.gradientTo as string);
+      }
+      ctx!.fillStyle = gradientRef.current;
 
-      const grad = ctx!.createLinearGradient(0, 0, w, h);
-      grad.addColorStop(0, p.gradientFrom as string);
-      grad.addColorStop(1, p.gradientTo as string);
-      ctx!.fillStyle = grad;
-
+      /* ── Loop invariants ─────────────────────────── */
       const cr = p.cursorRadius as number;
       const crSq = cr * cr;
       const rad = (p.dotRadius as number) / 2;
       const isBulge = p.bulgeOnly as boolean;
+      const bulgeStr = p.bulgeStrength as number;
+      const wAmp = p.waveAmplitude as number;
 
       ctx!.beginPath();
 
@@ -215,8 +241,8 @@ const DotField = memo(function DotField({
         if (distSq < crSq && eng > 0.01) {
           const dist = Math.sqrt(distSq);
           if (isBulge) {
-            const t = 1 - dist / cr;
-            const push = t * t * (p.bulgeStrength as number) * eng;
+            const nt = 1 - dist / cr;
+            const push = nt * nt * bulgeStr * eng;
             const angle = Math.atan2(dy, dx);
             d.sx += (d.ax - Math.cos(angle) * push - d.sx) * 0.15;
             d.sy += (d.ay - Math.sin(angle) * push - d.sy) * 0.15;
@@ -243,17 +269,13 @@ const DotField = memo(function DotField({
 
         let drawX = d.sx;
         let drawY = d.sy;
-        if ((p.waveAmplitude as number) > 0) {
-          drawY +=
-            Math.sin(d.ax * 0.03 + t) * (p.waveAmplitude as number);
-          drawX +=
-            Math.cos(d.ay * 0.03 + t * 0.7) *
-            (p.waveAmplitude as number) *
-            0.5;
+        if (wAmp > 0) {
+          drawY += Math.sin(d.ax * 0.03 + t) * wAmp;
+          drawX += Math.cos(d.ay * 0.03 + t * 0.7) * wAmp * 0.5;
         }
 
         if (p.sparkle) {
-          const hash = ((i * 2654435761) ^ (frameCount >> 3)) >>> 0;
+          const hash = ((i * 2654435761) ^ (Math.round(timestamp / 8))) >>> 0;
           if (hash % 100 < 3) {
             ctx!.moveTo(drawX + rad * 1.8, drawY);
             ctx!.arc(drawX, drawY, rad * 1.8, 0, TWO_PI);
@@ -268,6 +290,32 @@ const DotField = memo(function DotField({
       }
 
       ctx!.fill();
+
+      /* ── Adaptive quality — FPS monitor ────────────
+       * Every ~120 frames (~2 s at 60 fps) check
+       * whether we're hitting the target.  If not,
+       * widen dot spacing (fewer dots) so the canvas
+       * loop gets lighter.  Improvement is immediate
+       * because buildDots() runs right here.          */
+      q.frameCount++;
+      if (timestamp - q.lastCheck > 2000) {
+        const fps = q.frameCount / ((timestamp - q.lastCheck) / 1000);
+        q.frameCount = 0;
+        q.lastCheck = timestamp;
+
+        if (fps < 40 && q.spacingMul < 2.5) {
+          q.spacingMul = Math.min(2.5, q.spacingMul + 0.5);
+          buildDots(w, h, q.spacingMul);
+        } else if (fps > 52 && q.spacingMul > 1) {
+          q.spacingMul = Math.max(1, q.spacingMul - 0.25);
+          buildDots(w, h, q.spacingMul);
+        }
+      }
+
+      /* ── Flag for frame skip next time ─────────────
+       * If THIS frame took > 24 ms the next frame will
+       * be skipped so the system gets a breather.      */
+      q.heavy = performance.now() - frameStart > 24;
 
       rafRef.current = requestAnimationFrame(tick);
     }

@@ -265,7 +265,7 @@ export default function Journey() {
   return (
     <>
       {/* ── Journey heading — animated on scroll via ScrollFloat ── */}
-      <section className="relative min-h-[60vh] flex items-center justify-center px-6 overflow-hidden bg-bg-deep">
+      <section className="relative min-h-[60vh] flex items-center justify-center px-6 overflow-hidden">
         <div className="text-center max-w-4xl mx-auto">
           <ScrollFloat
             containerClassName="mb-4"

@@ -58,7 +58,7 @@
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, #d4a24c, #4fa39c, #d4a24c);
+    background: linear-gradient(135deg, #c084fc, #2dd4bf, #c084fc);
     background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -66,7 +66,7 @@
   }
 
   .text-gradient-gold {
-    background: linear-gradient(135deg, #d4a24c, #e8c97a);
+    background: linear-gradient(135deg, #c084fc, #a78bfa);
     background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -113,7 +113,7 @@
 /* ── Dashed separator line used in the ID card ── */
 .separator-dashed {
   border: none;
-  border-top: 1px dashed #c4b89e;
+  border-top: 1px dashed #a78bfa;
   margin: 0.75rem 0;
 }
 

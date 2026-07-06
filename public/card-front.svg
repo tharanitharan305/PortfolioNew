@@ -1,60 +1,68 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 420">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 755" width="500" height="755">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#1a1c25"/>
-      <stop offset="100%" stop-color="#12141c"/>
+      <stop offset="100%" stop-color="#0a0a14"/>
     </linearGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#d4a24c"/>
-      <stop offset="100%" stop-color="#4fa39c"/>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c084fc"/>
+      <stop offset="100%" stop-color="#2dd4bf"/>
     </linearGradient>
     <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#d4a24c" stop-opacity="0.15"/>
-      <stop offset="100%" stop-color="#d4a24c" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#c084fc" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#c084fc" stop-opacity="0"/>
     </linearGradient>
   </defs>
 
   <!-- Background -->
-  <rect width="600" height="420" rx="12" fill="url(#bg)"/>
+  <rect width="500" height="755" rx="12" fill="url(#bg)"/>
 
   <!-- Subtle glow at top -->
-  <rect width="600" height="200" rx="12" fill="url(#glow)"/>
+  <rect width="500" height="300" rx="12" fill="url(#glow)"/>
 
   <!-- Accent top border line -->
-  <rect x="40" y="0" width="520" height="3" fill="url(#accent)" rx="1.5"/>
+  <rect x="30" y="0" width="440" height="3" fill="url(#accent)" rx="1.5"/>
 
-  <!-- Decorative dots pattern -->
+  <!-- Decorative dots pattern (top area) -->
   <g opacity="0.06">
-    <circle cx="50" cy="50" r="2" fill="#d4a24c"/>
-    <circle cx="100" cy="50" r="2" fill="#d4a24c"/>
-    <circle cx="150" cy="50" r="2" fill="#d4a24c"/>
-    <circle cx="200" cy="50" r="2" fill="#d4a24c"/>
-    <circle cx="250" cy="50" r="2" fill="#4fa39c"/>
-    <circle cx="300" cy="50" r="2" fill="#4fa39c"/>
-    <circle cx="350" cy="50" r="2" fill="#4fa39c"/>
-    <circle cx="400" cy="50" r="2" fill="#4fa39c"/>
-    <circle cx="450" cy="50" r="2" fill="#d4a24c"/>
-    <circle cx="500" cy="50" r="2" fill="#d4a24c"/>
-    <circle cx="550" cy="50" r="2" fill="#d4a24c"/>
+    <circle cx="40" cy="60" r="2" fill="#c084fc"/>
+    <circle cx="90" cy="60" r="2" fill="#c084fc"/>
+    <circle cx="140" cy="60" r="2" fill="#c084fc"/>
+    <circle cx="190" cy="60" r="2" fill="#c084fc"/>
+    <circle cx="250" cy="60" r="2" fill="#2dd4bf"/>
+    <circle cx="310" cy="60" r="2" fill="#2dd4bf"/>
+    <circle cx="360" cy="60" r="2" fill="#2dd4bf"/>
+    <circle cx="410" cy="60" r="2" fill="#c084fc"/>
+    <circle cx="460" cy="60" r="2" fill="#c084fc"/>
   </g>
 
   <!-- Large initial letter (watermark) -->
-  <text x="60" y="320" font-family="serif" font-size="280" font-weight="900" fill="#d4a24c" opacity="0.04">T</text>
+  <text x="-10" y="500" font-family="serif" font-size="360" font-weight="900" fill="#c084fc" opacity="0.04">T</text>
 
   <!-- Avatar circle -->
-  <circle cx="300" cy="100" r="40" fill="url(#accent)" opacity="0.15"/>
-  <text x="300" y="115" font-family="sans-serif" font-size="36" font-weight="700" fill="#d4a24c" text-anchor="middle">T</text>
+  <circle cx="250" cy="120" r="45" fill="url(#accent)" opacity="0.15"/>
+  <text x="250" y="138" font-family="sans-serif" font-size="42" font-weight="700" fill="#c084fc" text-anchor="middle">T</text>
 
   <!-- Name -->
-  <text x="300" y="195" font-family="'Space Grotesk', sans-serif" font-size="36" font-weight="700" fill="#e8e4d8" text-anchor="middle" letter-spacing="3">THARANITHARAN</text>
+  <text x="250" y="250" font-family="'Space Grotesk', sans-serif" font-size="34" font-weight="700" fill="#e2e8f0" text-anchor="middle" letter-spacing="3">THARANITHARAN</text>
 
   <!-- Divider line -->
-  <rect x="220" y="215" width="160" height="2" fill="url(#accent)" rx="1"/>
+  <rect x="170" y="280" width="160" height="2" fill="url(#accent)" rx="1"/>
 
   <!-- Role -->
-  <text x="300" y="248" font-family="monospace" font-size="14" fill="#4fa39c" text-anchor="middle" letter-spacing="4">FULL STACK DEVELOPER</text>
+  <text x="250" y="318" font-family="monospace" font-size="14" fill="#2dd4bf" text-anchor="middle" letter-spacing="4">FULL STACK DEVELOPER</text>
+
+  <!-- Bottom decorative dots -->
+  <g opacity="0.06">
+    <circle cx="100" cy="460" r="3" fill="#c084fc"/>
+    <circle cx="400" cy="460" r="3" fill="#2dd4bf"/>
+    <circle cx="180" cy="500" r="2" fill="#c084fc"/>
+    <circle cx="320" cy="500" r="2" fill="#2dd4bf"/>
+    <circle cx="60" cy="540" r="2.5" fill="#c084fc"/>
+    <circle cx="440" cy="540" r="2.5" fill="#2dd4bf"/>
+  </g>
 
   <!-- Bottom accent bar -->
-  <rect x="180" y="380" width="240" height="1" fill="#ffffff" opacity="0.08"/>
-  <text x="300" y="398" font-family="monospace" font-size="8" fill="#ffffff" opacity="0.25" text-anchor="middle" letter-spacing="2">BUILDING WITH PURPOSE</text>
+  <rect x="150" y="715" width="200" height="1" fill="#ffffff" opacity="0.08"/>
+  <text x="250" y="733" font-family="monospace" font-size="8" fill="#ffffff" opacity="0.25" text-anchor="middle" letter-spacing="2">BUILDING WITH PURPOSE</text>
 </svg>

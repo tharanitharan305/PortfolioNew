@@ -90,7 +90,7 @@
   height: 56px;
   display: grid;
   place-items: center;
-  background: #d4a24c;
+  background: #c084fc;
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -122,7 +122,7 @@
 
 .infinite-menu-button-icon {
   position: relative;
-  color: #12141c;
+  color: #0a0a14;
   font-size: 24px;
   line-height: 1;
   top: 1px;

@@ -183,7 +183,7 @@ function AnimatedDescription() {
       <span className="mx-1" />
       <Highlighter
         action="highlight"
-        color="#d4a24c"
+        color="#c084fc"
         className="gsap-word"
       >
         languages
@@ -192,7 +192,7 @@ function AnimatedDescription() {
       <span className="mx-1" />
       <Highlighter
         action="highlight"
-        color="#d4a24c"
+        color="#c084fc"
         className="gsap-word"
       >
         frameworks
@@ -201,7 +201,7 @@ function AnimatedDescription() {
       <span className="mx-1" />
       <Highlighter
         action="highlight"
-        color="#d4a24c"
+        color="#c084fc"
         className="gsap-word"
       >
         SDKs
@@ -210,7 +210,7 @@ function AnimatedDescription() {
       <span className="mx-1" />
       <Highlighter
         action="underline"
-        color="#4fa39c"
+        color="#2dd4bf"
         className="gsap-word"
       >
         mobile
@@ -219,7 +219,7 @@ function AnimatedDescription() {
       <span className="mx-1" />
       <Highlighter
         action="underline"
-        color="#4fa39c"
+        color="#2dd4bf"
         className="gsap-word"
       >
         web
@@ -228,7 +228,7 @@ function AnimatedDescription() {
       <span className="mx-1" />
       <Highlighter
         action="underline"
-        color="#4fa39c"
+        color="#2dd4bf"
         className="gsap-word"
       >
         backend
@@ -237,7 +237,7 @@ function AnimatedDescription() {
       <span className="mx-1" />
       <Highlighter
         action="underline"
-        color="#4fa39c"
+        color="#2dd4bf"
         className="gsap-word"
       >
         cloud
@@ -315,7 +315,7 @@ export default function TechStack() {
          ═══════════════════════════════════════════════════════ */}
       <section
         ref={section1Ref}
-        className="relative min-h-[70vh] flex items-center justify-center px-6 overflow-hidden bg-bg-deep"
+        className="relative min-h-[70vh] flex items-center justify-center px-6 overflow-hidden"
       >
         {/* ── Parallax background ── */}
         <div className="tech-bg-layer absolute inset-0 pointer-events-none">
@@ -375,7 +375,7 @@ export default function TechStack() {
          ═══════════════════════════════════════════════════════ */}
       <section
         ref={section2Ref}
-        className="relative w-full bg-bg-deep px-4 pb-24 sm:pb-32 overflow-hidden"
+        className="relative w-full px-4 pb-24 sm:pb-32 overflow-hidden"
       >
         {/* ── Ambient glow geometry ── */}
         <div

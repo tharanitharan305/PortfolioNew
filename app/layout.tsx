@@ -54,9 +54,9 @@ export default function RootLayout({
           glowRadius={160}
           sparkle={false}
           waveAmplitude={0}
-          gradientFrom="rgba(168, 85, 247, 0.35)"
-          gradientTo="rgba(180, 151, 207, 0.25)"
-          glowColor="#120F17"
+          gradientFrom="rgba(192, 132, 252, 0.35)"
+          gradientTo="rgba(45, 212, 191, 0.25)"
+          glowColor="#0d0618"
         />
 
         {/* ── Page content ── */}

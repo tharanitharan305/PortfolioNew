@@ -32,7 +32,7 @@ const variants: Record<string, Variants> = {
 export function Highlighter({
   children,
   action = "underline",
-  color = "#d4a24c",
+  color = "#c084fc",
   className,
 }: HighlighterProps) {
   if (action === "highlight") {
