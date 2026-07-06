@@ -2,9 +2,19 @@
  *  OpenSource — Terminal Typewriter Section
  *
  *  A retro terminal window that "types out" each open-source
- *  repo entry when scrolled into view.  The design follows the
- *  site's dark / purple-teal accent palette while evoking a
- *  developer-native CLI aesthetic.
+ *  repo entry when scrolled into view.
+ *
+ *  ANIMATION APPROACH
+ *  ─────────────────
+ *  The outer entrance (terminal frame, prompt, names, stats)
+ *  is handled by Framer Motion `whileInView` — reliable and
+ *  already proven in Hero / TechStack.
+ *
+ *  The typewriter effect on descriptions is pure CSS:
+ *  each character span gets an inline `animation-delay` and
+ *  a .typing-active class triggers the `typeIn` keyframe.
+ *  An IntersectionObserver adds the class — no GSAP needed
+ *  for the core reveal.
  * ═══════════════════════════════════════════════════════════ */
 
 /* ── Terminal outer shell ─────────────────────────────── */
@@ -94,7 +104,16 @@
 .terminal-header-line {
   display: flex;
   align-items: center;
-  opacity: 0;
+  opacity: 0; /* animated in by CSS keyframe */
+}
+
+.typing-active .terminal-header-line {
+  animation-name: fadeIn;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* ── Output area ──────────────────────────────────────── */
@@ -110,11 +129,31 @@
   padding: 3px 0;
 }
 
+/* ── Shared animation default for all typewriter-phase elements ──
+ *  Each one sets its own delay + duration via inline style.  The
+ *  remaining properties are consolidated here so they stay in sync. */
+.typing-active .repo-name,
+.typing-active .repo-stats,
+.typing-active .terminal-header-line,
+.typing-active .terminal-final-prompt {
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+}
+
 .repo-name {
   display: flex;
   align-items: center;
   gap: 10px;
-  opacity: 0;
+  opacity: 0; /* animated in by CSS keyframe */
+}
+
+.typing-active .repo-name {
+  animation-name: slideInLeft;
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 .terminal-index {
@@ -143,7 +182,7 @@
   text-underline-offset: 3px;
 }
 
-/* ── Description typewriter ───────────────────────────── */
+/* ── Description + typewriter chars ───────────────────── */
 
 .repo-description {
   display: flex;
@@ -165,9 +204,33 @@
   flex: 1;
 }
 
+/* ── Typewriter character animation ─────────────────────
+ *
+ *  Characters start invisible.  When .typing-active is
+ *  added to the parent, each char plays a 1 ms fade-in
+ *  with its own animation-delay (set inline), producing
+ *  the typewriter effect without any JS animation lib.
+ *
+ *  The key insight: the animation "fills" at the delay
+ *  time and holds at opacity:1 via "forwards".
+ * ─────────────────────────────────────────────────────── */
+
 .typewriter-char {
   display: inline;
   opacity: 0;
+}
+
+.typing-active .typewriter-char {
+  animation: typeIn 0.01s ease-out forwards;
+}
+
+@keyframes typeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ── Stats row ────────────────────────────────────────── */
@@ -179,7 +242,16 @@
   padding-left: 36px;
   margin-top: 5px;
   font-size: 11px;
-  opacity: 0;
+  opacity: 0; /* animated in by CSS keyframe */
+}
+
+.typing-active .repo-stats {
+  animation-name: fadeInUp;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .terminal-stat {
@@ -220,15 +292,22 @@
   display: flex;
   align-items: center;
   margin-top: 22px;
-  opacity: 0;
+  opacity: 0; /* animated in by CSS keyframe */
+}
+
+.typing-active .terminal-final-prompt {
+  animation-name: fadeIn;
 }
 
 .terminal-cursor {
   color: #2dd4bf;
   margin-left: 8px;
-  animation: terminal-blink 1s step-end infinite;
   font-size: 14px;
   line-height: 1;
+}
+
+.cursor-blink {
+  animation: terminal-blink 1s step-end infinite;
 }
 
 @keyframes terminal-blink {
@@ -241,26 +320,19 @@
   }
 }
 
-/* ── Separator line ───────────────────────────────────── */
-
-.terminal-sep {
-  border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
-  margin: 4px 0;
-}
-
 /* ── Reduced motion: show everything at once ──────────── */
 
-.reduce-motion .terminal-root,
-.reduce-motion .terminal-header-line,
+.reduce-motion .typewriter-char,
 .reduce-motion .repo-name,
 .reduce-motion .repo-stats,
-.reduce-motion .terminal-final-prompt,
-.reduce-motion .typewriter-char {
+.reduce-motion .terminal-header-line,
+.reduce-motion .terminal-final-prompt {
   opacity: 1 !important;
+  animation: none !important;
+  transform: none !important;
 }
 
-.reduce-motion .terminal-cursor {
+.reduce-motion .cursor-blink {
   animation: none !important;
   opacity: 1 !important;
 }
