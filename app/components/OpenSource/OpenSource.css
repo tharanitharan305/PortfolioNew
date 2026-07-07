@@ -1,25 +1,33 @@
 /* ═══════════════════════════════════════════════════════════
- *  OpenSource — Terminal Typewriter Section
+ *  OpenSource — Sticky‑Scroll Terminal Session
  *
- *  A retro terminal window that "types out" each open-source
- *  repo entry when scrolled into view.
- *
- *  ANIMATION APPROACH
- *  ─────────────────
- *  The outer entrance (terminal frame, prompt, names, stats)
- *  is handled by Framer Motion `whileInView` — reliable and
- *  already proven in Hero / TechStack.
- *
- *  The typewriter effect on descriptions is pure CSS:
- *  each character span gets an inline `animation-delay` and
- *  a .typing-active class triggers the `typeIn` keyframe.
- *  An IntersectionObserver adds the class — no GSAP needed
- *  for the core reveal.
+ *  CSS `position: sticky` holds the terminal in view while
+ *  a tall spacer section scrolls past.  GSAP ScrollTrigger
+ *  tracks progress (0→1) through the spacer, and React
+ *  maps that to which lines / how many chars are visible.
  * ═══════════════════════════════════════════════════════════ */
+
+/* ── Track (tall spacer that determines scroll distance) ── */
+
+.os-track {
+  position: relative;
+}
+
+/* ── Sticky terminal wrapper ────────────────────────────── */
+
+.os-sticky-wrap {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
 
 /* ── Terminal outer shell ─────────────────────────────── */
 
 .terminal-root {
+  width: 100%;
   background: rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -31,9 +39,9 @@
     0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-/* ── Title bar (macOS-style traffic-light dots) ──────── */
+/* ── Title bar ──────────────────────────────────────────── */
 
-.terminal-titlebar {
+.term-titlebar {
   display: flex;
   align-items: center;
   padding: 12px 18px;
@@ -42,33 +50,25 @@
   user-select: none;
 }
 
-.terminal-dots {
+.term-dots {
   display: flex;
   gap: 8px;
 }
 
-.terminal-dot {
+.term-dot {
   width: 12px;
   height: 12px;
   border-radius: 50%;
   transition: opacity 0.2s;
 }
 
-.terminal-dot-red {
-  background: #ff5f57;
-}
-.terminal-dot-yellow {
-  background: #ffbd2e;
-}
-.terminal-dot-green {
-  background: #28c840;
-}
+.term-dot-red { background: #ff5f57; }
+.term-dot-yellow { background: #ffbd2e; }
+.term-dot-green { background: #28c840; }
 
-.terminal-dots:hover .terminal-dot {
-  opacity: 0.8;
-}
+.term-dots:hover .term-dot { opacity: 0.8; }
 
-.terminal-title {
+.term-title {
   font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.25);
@@ -76,302 +76,236 @@
   letter-spacing: 0.04em;
 }
 
-.terminal-spacer {
-  flex: 1;
-}
+.term-spacer { flex: 1; }
 
-/* ── Body ─────────────────────────────────────────────── */
+/* ── Body ───────────────────────────────────────────────── */
 
-.terminal-body {
-  padding: 22px 26px;
+.term-body {
+  padding: 18px 22px;
   font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 13px;
-  line-height: 1.9;
+  line-height: 1.75;
   color: #e2e8f0;
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
 }
 
-/* ── Prompt line ──────────────────────────────────────── */
+/* ── Session container ──────────────────────────────────── */
 
-.terminal-prompt {
+.term-session {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Single line ─────────────────────────────────────────── */
+
+.term-line {
+  min-height: 1.3em;
+}
+
+.term-line + .term-line {
+  margin-top: 1px;
+}
+
+/* ── Prompt prefix ──────────────────────────────────────── */
+
+.term-prompt {
   color: #2dd4bf;
+  font-size: 12px;
 }
 
-.terminal-caret {
+.term-caret {
   color: #c084fc;
-  margin: 0 10px;
+  margin: 0 8px 0 6px;
 }
 
-.terminal-header-line {
-  display: flex;
+.term-prompt-line {
+  display: inline-flex;
   align-items: center;
-  opacity: 0; /* animated in by CSS keyframe */
+  flex-wrap: wrap;
 }
 
-.typing-active .terminal-header-line {
-  animation-name: fadeIn;
+.term-cmd-body {
+  display: inline;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* ── Typewriter text (characters revealed by scroll) ─────── */
+
+.term-type-text {
+  color: #e2e8f0;
+  white-space: pre-wrap;
 }
 
-/* ── Output area ──────────────────────────────────────── */
+/* ── Typewriter cursor ───────────────────────────────────── */
 
-.terminal-output {
-  margin: 18px 0 8px;
+.term-cursor-type {
+  display: inline-block;
+  color: #2dd4bf;
+  font-size: 13px;
+  line-height: 1;
+  margin-left: 1px;
+  animation: termBlink 0.8s step-end infinite;
 }
 
-/* ── Single repo entry ────────────────────────────────── */
-
-.repo-entry {
-  margin-bottom: 2px;
-  padding: 3px 0;
+@keyframes termBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
-/* ── Shared animation default for all typewriter-phase elements ──
- *  Each one sets its own delay + duration via inline style.  The
- *  remaining properties are consolidated here so they stay in sync. */
-.typing-active .repo-name,
-.typing-active .repo-stats,
-.typing-active .terminal-header-line,
-.typing-active .terminal-final-prompt {
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-out;
+/* ── Response block ─────────────────────────────────────── */
+
+.term-response {
+  padding-left: 24px;
+  margin: 1px 0 3px;
 }
 
-.repo-name {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  opacity: 0; /* animated in by CSS keyframe */
+.term-resp-line {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0;
 }
 
-.typing-active .repo-name {
-  animation-name: slideInLeft;
-}
-
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-10px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-.terminal-index {
-  color: rgba(255, 255, 255, 0.15);
-  font-size: 11px;
-  width: 26px;
-  flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-}
-
-.terminal-folder-icon {
-  font-size: 14px;
-  flex-shrink: 0;
-}
-
-.terminal-repo-name {
-  color: #c084fc;
-  font-weight: 500;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.terminal-repo-name:hover {
-  color: #a78bfa;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-/* ── Description + typewriter chars ───────────────────── */
-
-.repo-description {
-  display: flex;
-  gap: 8px;
-  padding-left: 36px;
-  margin-top: 2px;
-  color: rgba(255, 255, 255, 0.5);
+.term-resp-type {
+  color: rgba(255, 255, 255, 0.55);
   font-size: 12px;
   line-height: 1.65;
+  white-space: pre-wrap;
 }
 
-.terminal-arrow {
-  color: rgba(255, 255, 255, 0.15);
-  flex-shrink: 0;
-  font-size: 12px;
-}
+/* ─── Link row (--links output) ─────────────────────────────── */
 
-.terminal-desc-text {
-  flex: 1;
-}
-
-/* ── Typewriter character animation ─────────────────────
- *
- *  Characters start invisible.  When .typing-active is
- *  added to the parent, each char plays a 1 ms fade-in
- *  with its own animation-delay (set inline), producing
- *  the typewriter effect without any JS animation lib.
- *
- *  The key insight: the animation "fills" at the delay
- *  time and holds at opacity:1 via "forwards".
- * ─────────────────────────────────────────────────────── */
-
-.typewriter-char {
-  display: inline;
-  opacity: 0;
-}
-
-.typing-active .typewriter-char {
-  animation: typeIn 0.01s ease-out forwards;
-}
-
-@keyframes typeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* ── Stats row ────────────────────────────────────────── */
-
-.repo-stats {
+.term-link-row {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding-left: 36px;
-  margin-top: 5px;
-  font-size: 11px;
-  opacity: 0; /* animated in by CSS keyframe */
+  gap: 8px;
+  padding-left: 24px;
+  font-size: 12px;
+  line-height: 1.8;
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-.typing-active .repo-stats {
-  animation-name: fadeInUp;
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.terminal-stat {
-  color: rgba(255, 255, 255, 0.35);
+.term-ll-label {
+  color: rgba(255, 255, 255, 0.45);
+  min-width: 80px;
+  flex-shrink: 0;
   font-variant-numeric: tabular-nums;
 }
 
-.terminal-lang-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-  flex-shrink: 0;
+.term-ll-sep {
+  color: rgba(255, 255, 255, 0.2);
 }
 
-.terminal-lang {
-  color: rgba(255, 255, 255, 0.45);
-}
-
-.terminal-url {
-  color: rgba(255, 255, 255, 0.12);
-  font-size: 10px;
-  margin-left: auto;
+.term-ll-url {
+  color: #c084fc;
+  text-decoration: none;
+  transition: color 0.2s;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 160px;
-  transition: color 0.2s;
 }
 
-.repo-entry:hover .terminal-url {
-  color: rgba(255, 255, 255, 0.25);
+.term-ll-url:hover {
+  color: #a78bfa;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
-/* ── Final prompt + cursor ────────────────────────────── */
+/* ── Separator ────────────────────────────────────────────── */
 
-.terminal-final-prompt {
+.term-sep {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  margin: 8px 0 6px;
+  opacity: 0.5;
+}
+
+/* ── Reduced motion static layout ─────────────────────────── */
+
+.os-reduced {
+  overflow-y: auto;
+}
+
+.os-reduced .term-body {
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+.os-reduced .term-sl {
   display: flex;
   align-items: center;
-  margin-top: 22px;
-  opacity: 0; /* animated in by CSS keyframe */
+  padding: 1px 0;
+  font-size: 13px;
 }
 
-.typing-active .terminal-final-prompt {
-  animation-name: fadeIn;
+.os-reduced .term-static-cmd {
+  color: #c084fc;
 }
 
-.terminal-cursor {
-  color: #2dd4bf;
-  margin-left: 8px;
-  font-size: 14px;
-  line-height: 1;
+.os-reduced .term-static-resp {
+  padding-left: 22px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 1px 0 2px;
 }
 
-.cursor-blink {
-  animation: terminal-blink 1s step-end infinite;
+.os-reduced .term-pb {
+  margin-bottom: 16px;
 }
 
-@keyframes terminal-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
+.os-reduced .term-pb:last-child {
+  margin-bottom: 0;
 }
 
-/* ── Reduced motion: show everything at once ──────────── */
-
-.reduce-motion .typewriter-char,
-.reduce-motion .repo-name,
-.reduce-motion .repo-stats,
-.reduce-motion .terminal-header-line,
-.reduce-motion .terminal-final-prompt {
-  opacity: 1 !important;
-  animation: none !important;
-  transform: none !important;
+.os-reduced .term-pb + .term-pb {
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.reduce-motion .cursor-blink {
-  animation: none !important;
-  opacity: 1 !important;
-}
-
-/* ── Mobile adjustments ───────────────────────────────── */
+/* ── Mobile ───────────────────────────────────────────────── */
 
 @media (max-width: 640px) {
-  .terminal-body {
-    padding: 16px 14px;
+  .term-body {
+    padding: 12px 14px;
     font-size: 11px;
+    max-height: calc(100vh - 140px);
   }
 
-  .repo-description {
-    padding-left: 28px;
+  .term-response {
+    padding-left: 14px;
+  }
+
+  .term-resp-line,
+  .term-resp-type,
+  .term-link-row {
     font-size: 10px;
   }
 
-  .repo-stats {
-    padding-left: 28px;
-    font-size: 10px;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .terminal-url {
-    display: none;
-  }
-
-  .terminal-index {
-    width: 20px;
+  .term-ll-label {
+    min-width: 50px;
     font-size: 10px;
   }
 
-  .terminal-titlebar {
+  .term-titlebar {
     padding: 8px 12px;
   }
 
-  .terminal-dot {
+  .term-dot {
     width: 10px;
     height: 10px;
+  }
+
+  .term-title {
+    font-size: 10px;
+  }
+
+  .term-cursor-type {
+    font-size: 11px;
+  }
+
+  .os-sticky-wrap {
+    height: 100dvh;
   }
 }
